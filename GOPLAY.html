@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOPLAY</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            font-family: 'Roboto', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.7);
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #4caf50;
+            text-shadow: 0px 4px 10px rgba(76, 175, 80, 0.8);
+            animation: slideInFromLeft 1.5s ease-out;
+        }
+
+        @keyframes slideInFromLeft {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .form-container {
+            width: 100%;
+        }
+
+        .form-container input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .form-container input:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .form-container input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .form-container button {
+            width: 100%;
+            padding: 15px;
+            background: #4caf50;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .form-container button:hover {
+            background: #388e3c;
+            transform: translateY(-2px);
+        }
+
+        .form-container input,
+        .form-container button {
+            display: block;
+            width: calc(100% - 30px);
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .error {
+            color: #e74c3c;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .switch-link {
+            color: #4caf50;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 0.9rem;
+            margin-top: 15px;
+        }
+
+        .switch-link:hover {
+            color: #388e3c;
+        }
+
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            filter: blur(5px) brightness(0.5);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-image"></div>
+    <div class="container">
+        <h1>GOPLAY</h1>
+        <div class="form-container" id="formContainer">
+            <form id="loginForm">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+                <p class="error" id="error">Invalid username or password</p>
+                <p class="switch-link" id="switchToRegister">Register</p>
+            </form>
+            <form id="registerForm" style="display: none;">
+                <input type="text" id="newUsername" placeholder="Username" required>
+                <input type="password" id="newPassword" placeholder="Password" required>
+                <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+                <button type="submit">Register</button>
+                <p class="error" id="registerError"></p>
+                <p class="switch-link" id="switchToLogin">Back to Login</p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const switchToRegister = document.getElementById('switchToRegister');
+        const switchToLogin = document.getElementById('switchToLogin');
+        const errorElement = document.getElementById('error');
+        const registerErrorElement = document.getElementById('registerError');
+        const existingUsers = ['Draxler'];
+
+        switchToRegister.addEventListener('click', () => {
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'block';
+        });
+
+        switchToLogin.addEventListener('click', () => {
+            registerForm.style.display = 'none';
+            loginForm.style.display = 'block';
+        });
+
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === 'Draxler' && password === '1233211') {
+                window.location.href = './index.html';
+            } else {
+                errorElement.style.display = 'block';
+                errorElement.textContent = 'Invalid username or password';
+            }
+        });
+
+        registerForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const newUsername = document.getElementById('newUsername').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (existingUsers.includes(newUsername)) {
+                registerErrorElement.style.display = 'block';
+                registerErrorElement.textContent = 'Username already exists';
+            } else if (newPassword !== confirmPassword) {
+                registerErrorElement.style.display = 'block';
+                registerErrorElement.textContent = 'Passwords do not match';
+            } else {
+                existingUsers.push(newUsername);
+                window.location.href = './Product.html';
+            }
+        });
+    </script>
+</body>
+</html>

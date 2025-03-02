@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игра Змейка</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            background-color: rgb(27, 21, 21);
+            font-family: Arial, sans-serif;
+        }
+        #board {
+            display: grid;
+            grid-template-columns: repeat(20, 30px);
+            grid-template-rows: repeat(20, 30px);
+            border: 4px solid #228B22;
+            border-radius: 10px;
+        }
+        .cell { width: 30px; height: 30px; background-color: #98FB98; }
+        .snake { background-color: #228B22; }
+        .food { background-color: red; }
+        button { margin: 10px; padding: 10px; }
+        #gameOver { display: none; color: red; font-size: 24px; }
+        #score { font-size: 24px; }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s;
+        }
+        .back-button:hover {
+            background-color: #e91e63;
+        }
+    </style>
+</head>
+<body>
+
+    <button class="back-button" onclick="window.location.href = 'index.html';">Назад</button>
+
+    <h1 style="color:white;">Игра Змейка</h1>
+    <div id="score" style="color:white;">Счет: 0</div>
+    <div id="board"></div>
+    <div id="gameOver" style="color:white;">Вы проиграли!</div>
+    <button id="startButton">Начать игру</button>
+
+    <script>
+        const boardElement = document.getElementById('board');
+        const startButton = document.getElementById('startButton');
+        const gameOverElement = document.getElementById('gameOver');
+        const scoreElement = document.getElementById('score');
+        const boardSize = 20;
+        let snake, food, direction, speed, lastRenderTime, score, isGameOver;
+
+        function startGame() {
+            snake = [{ x: 8, y: 8 }];
+            food = {};
+            direction = { x: 1, y: 0 };
+            speed = 100;
+            score = 0;
+            isGameOver = false;
+            placeFood();
+            createBoard();
+            lastRenderTime = 0;
+            requestAnimationFrame(gameLoop);
+            startButton.style.display = 'none';
+            gameOverElement.style.display = 'none';
+            scoreElement.textContent = 'Счет: ' + score;
+        }
+
+        function createBoard() {
+            boardElement.innerHTML = '';
+            for (let y = 0; y < boardSize; y++) {
+                for (let x = 0; x < boardSize; x++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    boardElement.appendChild(cell);
+                }
+            }
+            drawSnake();
+            drawFood();
+        }
+
+        function drawSnake() {
+            snake.forEach(segment => {
+                const index = segment.y * boardSize + segment.x;
+                boardElement.children[index].classList.add('snake');
+            });
+        }
+
+        function drawFood() {
+            const index = food.y * boardSize + food.x;
+            boardElement.children[index].classList.add('food');
+        }
+
+        function placeFood() {
+            do {
+                food = { x: Math.floor(Math.random() * boardSize), y: Math.floor(Math.random() * boardSize) };
+            } while (snake.some(segment => segment.x === food.x && segment.y === food.y));
+        }
+
+        function update() {
+            if (isGameOver) return;
+            
+            const newHead = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+            if (newHead.x < 0 || newHead.x >= boardSize || newHead.y < 0 || newHead.y >= boardSize || 
+                snake.some(segment => segment.x === newHead.x && segment.y === newHead.y)) {
+                isGameOver = true;
+                gameOverElement.style.display = 'block';
+                startButton.style.display = 'block';
+                return;
+            }
+            snake.unshift(newHead);
+            if (newHead.x === food.x && newHead.y === food.y) {
+                score++;
+                scoreElement.textContent = 'Счет: ' + score;
+                placeFood();
+            } else {
+                snake.pop();
+            }
+        }
+
+        function gameLoop(timestamp) {
+            if (isGameOver) return;
+            
+            if (timestamp - lastRenderTime >= speed) {
+                lastRenderTime = timestamp;
+                update();
+                createBoard();
+            }
+            requestAnimationFrame(gameLoop);
+        }
+
+        function changeDirection(event) {
+            if (isGameOver) return;
+
+            switch (event.key) {
+                case 'w': if (direction.y !== 1) direction = { x: 0, y: -1 }; break;
+                case 's': if (direction.y !== -1) direction = { x: 0, y: 1 }; break;
+                case 'a': if (direction.x !== 1) direction = { x: -1, y: 0 }; break;
+                case 'd': if (direction.x !== -1) direction = { x: 1, y: 0 }; break;
+                case 'W': if (direction.y !== 1) direction = { x: 0, y: -1 }; break;
+                case 'S': if (direction.y !== -1) direction = { x: 0, y: 1 }; break;
+                case 'A': if (direction.x !== 1) direction = { x: -1, y: 0 }; break;
+                case 'D': if (direction.x !== -1) direction = { x: 1, y: 0 }; break;
+                case 'Ц': if (direction.y !== 1) direction = { x: 0, y: -1 }; break;
+                case 'Ы': if (direction.y !== -1) direction = { x: 0, y: 1 }; break;
+                case 'Ф': if (direction.x !== 1) direction = { x: -1, y: 0 }; break;
+                case 'В': if (direction.x !== -1) direction = { x: 1, y: 0 }; break;
+                case 'ц': if (direction.y !== 1) direction = { x: 0, y: -1 }; break;
+                case 'ы': if (direction.y !== -1) direction = { x: 0, y: 1 }; break;
+                case 'ф': if (direction.x !== 1) direction = { x: -1, y: 0 }; break;
+                case 'в': if (direction.x !== -1) direction = { x: 1, y: 0 }; break;
+            }
+        }
+
+        document.addEventListener('keydown', changeDirection);
+        startButton.addEventListener('click', startGame);
+    </script>
+</body>
+</html>

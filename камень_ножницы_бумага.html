@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Камень, Ножницы, Бумага</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background: rgb(27, 21, 21);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            margin-top: 20px;
+        }
+        .choices {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .choices img {
+            width: 120px;
+            margin: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 10px;
+        }
+        .choices img:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+        }
+        #computer-choice-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        #computer-choice-img {
+            width: 120px;
+            margin-top: 10px;
+            border-radius: 10px;
+        }
+        #result {
+            font-size: 26px;
+            margin: 20px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        #play-again {
+            display: none;
+            padding: 12px 25px;
+            font-size: 20px;
+            font-weight: bold;
+            background: #f8a5c2;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+        #play-again:hover {
+            background: #e77f67;
+            transform: scale(1.1);
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s;
+        }
+        .back-button:hover {
+            background-color: #e91e63;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href = 'index.html';">Назад</button>
+    <h1>Камень, Ножницы, Бумага</h1>
+    <div class="choices">
+        <img src="png-clipart-stones-and-rocks-stones-and-rocks-removebg-preview.png" alt="Камень" onclick="playGame('rock')">
+        <img src="images-removebg-preview.png" alt="Ножницы" onclick="playGame('scissors')">
+        <img src="png-clipart-paper-leaf-leaf-white-leaf-thumbnail-removebg-preview.png" alt="Бумага" onclick="playGame('paper')">
+    </div>
+    <div id="computer-choice-container">
+        <h2 id="computer-choice"></h2>
+        <img id="computer-choice-img" src="" alt="" style="display: none;">
+    </div>
+    <h2 id="result"></h2>
+    <button id="play-again" onclick="resetGame()">Играть снова</button>
+    <script>
+        function playGame(playerChoice) {
+            const choices = {
+                rock: 'png-clipart-stones-and-rocks-stones-and-rocks-removebg-preview.png',
+                scissors: 'images-removebg-preview.png',
+                paper: 'png-clipart-paper-leaf-leaf-white-leaf-thumbnail-removebg-preview.png'
+            };
+            const choiceKeys = Object.keys(choices);
+            const computerChoice = choiceKeys[Math.floor(Math.random() * 3)];
+            
+            document.getElementById('computer-choice').innerText = `Компьютер выбрал:`;
+            document.getElementById('computer-choice-img').src = choices[computerChoice];
+            document.getElementById('computer-choice-img').alt = computerChoice;
+            document.getElementById('computer-choice-img').style.display = 'block';
+            document.getElementById('computer-choice-container').style.opacity = '1';
+            
+            let result = '';
+            if (playerChoice === computerChoice) {
+                result = 'Ничья!';
+            } else if (
+                (playerChoice === 'rock' && computerChoice === 'scissors') ||
+                (playerChoice === 'scissors' && computerChoice === 'paper') ||
+                (playerChoice === 'paper' && computerChoice === 'rock')
+            ) {
+                result = 'Ты выиграл!';
+            } else {
+                result = 'Ты проиграл!';
+            }
+            
+            document.getElementById('result').innerText = result;
+            document.getElementById('result').style.opacity = '1';
+            document.getElementById('play-again').style.display = 'block';
+        }
+        
+        function resetGame() {
+            document.getElementById('computer-choice').innerText = '';
+            document.getElementById('computer-choice-img').style.display = 'none';
+            document.getElementById('computer-choice-container').style.opacity = '0';
+            document.getElementById('result').innerText = '';
+            document.getElementById('result').style.opacity = '0';
+            document.getElementById('play-again').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

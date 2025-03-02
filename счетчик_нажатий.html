@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ракетный кликер</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: rgb(27, 21, 21);
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+        .stats {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .stats div {
+            font-size: 24px;
+            margin: 5px;
+        }
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        img {
+            width: 600px;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        img:active {
+            transform: scale(1.1);
+        }
+        .info-container {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .shop {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #ff9800, #ff5722);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .shop:hover {
+            background: linear-gradient(45deg, #ff5722, #e91e63);
+            transform: scale(1.1);
+        }
+        .error-message {
+            color: red;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s;
+        }
+        .back-button:hover {
+            background-color: #e91e63;
+        }
+    </style>
+</head>
+<body>
+
+<button class="back-button" onclick="window.location.href = 'index.html';">Назад</button>
+
+<div class="stats">
+    <div id="totalClicks">Всего кликов: 0</div>
+    <div id="coins">Баллы: 0</div>
+</div>
+
+<div class="game-container">
+    <img id="rocket" src="ракета-removebg-preview.png" alt="Ракета" onclick="incrementCount()" />
+    <div class="info-container">
+        <button class="shop" onclick="buyUpgrade()">Улучшить (+1 за клик) [Цена: <span id="price">10</span>]</button>
+        <div id="errorMessage" class="error-message"></div>
+    </div>
+</div>
+
+<script>
+    let totalClicks = 0;
+    let coins = 0;
+    let upgradeLevel = 1;
+    let upgradeCost = 10;
+
+    function incrementCount() {
+        totalClicks++;
+        coins += upgradeLevel;
+        document.getElementById('totalClicks').innerHTML = "Всего кликов: " + totalClicks;
+        document.getElementById('coins').innerHTML = "Баллы: " + coins;
+        document.getElementById('errorMessage').innerHTML = ""; 
+    }
+
+    function buyUpgrade() {
+        if (coins >= upgradeCost) {
+            coins -= upgradeCost;
+            upgradeLevel++;
+            upgradeCost = Math.floor(upgradeCost * 1.5);
+            document.getElementById('coins').innerHTML = "Баллы: " + coins;
+            document.getElementById('price').innerText = upgradeCost;
+            document.getElementById('errorMessage').innerHTML = ""; 
+        } else {
+            document.getElementById('errorMessage').innerHTML = "Недостаточно баллов!";
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: rgb(27, 21, 21);
+            color: white;
+        }
+        canvas {
+            border: 1px solid white;
+            background-color: #1e1e1e;
+        }
+        #score {
+            font-size: 1.5em;
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s;
+        }
+        .back-button:hover {
+            background-color: #e91e63;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href = 'index.html';">Назад</button>
+
+    <canvas id="tetris" width="300" height="600"></canvas>
+    <div id="score">Счет: 0</div>
+    <button id="restart" style="display:none;">Играть снова</button>
+    <div id="gameOver" style="display:none; font-size:2em; text-align:center;">Игра окончена</div>
+    <script>
+        const canvas = document.getElementById('tetris');
+        const context = canvas.getContext('2d');
+        context.scale(20, 20);
+        const colors = ['#000', '#0ff', '#f0f', '#ff0', '#f00', '#0f0', '#00f', '#ff80', '#80ff', '#ff0080', '#80ff00', '#0080ff', '#ff8000', '#8000ff', '#00ff80', '#f0a500', '#a500f0', '#f500a5', '#00a5f5', '#a5f500'];
+        const pieces = [
+            [[1, 1, 1, 1]],
+            [[1, 1], [1, 1]], 
+            [[0, 1, 0], [1, 1, 1]], 
+            [[1, 1, 0], [0, 1, 1]], 
+            [[0, 1, 1], [1, 1, 0]], 
+            [[1],[1],[1],[1]],
+            [[1, 1, 1], [1, 0, 0]], 
+            [[1, 1, 1], [0, 0, 1]], 
+            [[1, 0, 0], [1, 1, 1]], 
+            [[0, 0, 1], [1, 1, 1]], 
+            [[1, 1, 1], [0, 1, 0]], 
+            [[1, 1, 1], [1, 0, 1]], 
+            [[0, 1, 1], [0, 1, 0]], 
+            [[1, 0, 1], [1, 1, 1]],
+            [[0, 1, 1, 1], [1, 0, 0, 0]], 
+            [[1, 1, 0, 0], [0, 1, 1, 0]], 
+            [[0, 0, 1, 1], [1, 1, 0, 0]], 
+            [[1, 1, 1, 1], [0, 0, 0, 1]], 
+            [[1, 1], [1, 0], [1, 0]], 
+            [[1, 1, 1], [0, 0, 0], [0, 1, 0]], 
+            [[1, 1, 1, 0], [0, 1, 0, 0]], 
+        ];
+
+        let playfield = Array.from({ length: 30 }, () => Array(15).fill(0));
+        let currentPiece = { shape: [], x: 0, y: 0 };
+        let score = 0;
+        let dropInterval = 1000;
+        let lastDropTime = 0;
+
+        function drawGrid() {
+            context.strokeStyle = '#333';
+            for (let x = 0; x < 15; x++) {
+                context.beginPath();
+                context.moveTo(x, 0);
+                context.lineTo(x, 30);
+                context.stroke();
+            }
+            for (let y = 0; y < 30; y++) {
+                context.beginPath();
+                context.moveTo(0, y);
+                context.lineTo(15, y);
+                context.stroke();
+            }
+        }
+
+        function draw() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            drawGrid();
+            playfield.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value) {
+                        context.fillStyle = colors[value];
+                        context.fillRect(x, y, 1, 1);
+                    }
+                });
+            });
+            currentPiece.shape.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value) {
+                        context.fillStyle = colors[value];
+                        context.fillRect(currentPiece.x + x, currentPiece.y + y, 1, 1);
+                    }
+                });
+            });
+            document.getElementById('score').innerText = `Счет: ${score}`;
+        }
+        function update(timestamp) {
+            if (timestamp - lastDropTime > dropInterval) {
+                currentPiece.y += 1;
+                if (collision()) {
+                    currentPiece.y -= 1;
+                    merge();
+                    score += checkLines(); // Увеличиваем очки
+                    newPiece();
+                    if (collision()) {
+                        endGame();
+                    }
+                }
+                lastDropTime = timestamp;
+            }
+            draw();
+        }
+
+        function collision() {
+            for (let y = 0; y < currentPiece.shape.length; y++) {
+                for (let x = 0; x < currentPiece.shape[y].length; x++) {
+                    if (currentPiece.shape[y][x] && (playfield[y + currentPiece.y] && playfield[y + currentPiece.y][x + currentPiece.x]) !== 0) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function merge() {
+            currentPiece.shape.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value) {
+                        playfield[y + currentPiece.y][x + currentPiece.x] = value;
+                    }
+                });
+            });
+        }
+
+        function checkLines() {
+            let linesCleared = 0;
+            outer: for (let y = playfield.length - 1; y >= 0; y--) {
+                if (playfield[y].every(value => value !== 0)) {
+                    playfield.splice(y, 1);
+                    playfield.unshift(Array(15).fill(0));
+                    linesCleared++;
+                }
+            }
+            return linesCleared * 100; // За каждые 100 очков за линию
+        }
+
+        function newPiece() {
+            const randomIndex = Math.floor(Math.random() * pieces.length);
+            currentPiece.shape = pieces[randomIndex];
+            currentPiece.x = Math.floor((playfield[0].length - currentPiece.shape[0].length) / 2);
+            currentPiece.y = 0;
+        }
+
+        function control(e) {
+            if (e.key === 'ArrowLeft') {
+                currentPiece.x--;
+                if (collision()) currentPiece.x++;
+            } else if (e.key === 'ArrowRight') {
+                currentPiece.x++;
+                if (collision()) currentPiece.x--;
+            } else if (e.key === 'ArrowDown') {
+                currentPiece.y += 1;
+                if (collision()) currentPiece.y--;
+            }
+        }
+
+        function endGame() {
+            document.getElementById('gameOver').style.display = 'block';
+            document.getElementById('restart').style.display = 'block';
+            clearInterval(gameInterval);
+        }
+
+        function restartGame() {
+            playfield = Array.from({ length: 30 }, () => Array(15).fill(0));
+            currentPiece = { shape: [], x: 0, y: 0 };
+            score = 0;
+            lastDropTime = 0;
+            newPiece();
+            draw();
+            document.getElementById('gameOver').style.display = 'none';
+            document.getElementById('restart').style.display = 'none';
+            gameInterval = setInterval(() => update(performance.now()), 16);
+        }
+
+        document.getElementById('restart').addEventListener('click', restartGame);
+        document.addEventListener('keydown', control);
+        newPiece();
+        const gameInterval = setInterval(() => update(performance.now()), 16);
+        draw();
+    </script>
+</body>
+</html>

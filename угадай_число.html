@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Угадай число</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: rgb(27, 21, 21);
+            color: white;
+        }
+        .container {
+            text-align: center;
+            background: rgb(27, 21, 21);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .input {
+            margin: 10px;
+            padding: 5px;
+            border: none;
+            border-radius: 5px;
+        }
+        .button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .message {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s;
+        }
+        .back-button:hover {
+            background-color: #e91e63;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href = 'index.html';">Назад</button>
+
+<div class="container">
+    <h1>Угадай число от 1 до 100</h1>
+    <input type="number" class="input" id="guess" placeholder="Введите число" />
+    <button class="button" onclick="checkGuess()">Угадать</button>
+    <button class="button" onclick="startGame()">Начать заново</button>
+    <div class="message" id="message"></div>
+    <div class="attempts" id="attempts">Попытки: 0</div>
+</div>
+
+<script>
+    let randomNumber, attempts;
+    const messageDiv = document.getElementById('message');
+    const attemptsDiv = document.getElementById('attempts');
+
+    function startGame() {
+        randomNumber = Math.floor(Math.random() * 100) + 1;
+        attempts = 0;
+        messageDiv.innerHTML = "Загадано новое число! Угадайте его.";
+        attemptsDiv.innerHTML = "Попытки: 0";
+        document.getElementById('guess').value = '';
+    }
+
+    function checkGuess() {
+        const userGuess = parseInt(document.getElementById('guess').value);
+        attempts++;
+        attemptsDiv.innerHTML = "Попытки: " + attempts;
+
+        if (isNaN(userGuess)) {
+            messageDiv.innerHTML = "Введите число!";
+            return;
+        }
+        if (userGuess < 1 || userGuess > 100) {
+            messageDiv.innerHTML = "Число вне диапазона! Введите от 1 до 100.";
+            attempts--; 
+            attemptsDiv.innerHTML = "Попытки: " + attempts;
+            return;
+        }
+        if (userGuess < randomNumber) {
+            messageDiv.innerHTML = "Слишком низко! Попробуйте снова.";
+        } else if (userGuess > randomNumber) {
+            messageDiv.innerHTML = "Слишком высоко! Попробуйте снова.";
+        } else {
+            messageDiv.innerHTML = "Поздравляем! Вы угадали число " + randomNumber + " за " + attempts + " попытки.";
+        }
+    }
+
+    document.getElementById('guess').addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            checkGuess();
+        }
+    });
+
+    startGame();
+</script>
+
+</body>
+</html>
