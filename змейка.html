@@ -10,28 +10,45 @@
             flex-direction: column;
             align-items: center;
             height: 100vh;
-            background-color: rgb(27, 21, 21);
+            background-image: url('https://st5.depositphotos.com/49638596/66811/i/450/depositphotos_668115218-stock-photo-highly-detailed-clean-background-horizontal.jpg');
+            background-size:cover;
             font-family: Arial, sans-serif;
         }
         #board {
             display: grid;
             grid-template-columns: repeat(20, 30px);
             grid-template-rows: repeat(20, 30px);
-            border: 4px solid #228B22;
+            border: 4px solid rgb(163, 4, 255);
             border-radius: 10px;
         }
-        .cell { width: 30px; height: 30px; background-color: #98FB98; }
-        .snake { background-color: #228B22; }
-        .food { background-color: red; }
-        button { margin: 10px; padding: 10px; }
-        #gameOver { display: none; color: red; font-size: 24px; }
-        #score { font-size: 24px; }
+        .cell { 
+            width: 30px; 
+            height: 30px; 
+            background-color: rgb(4, 255, 180); 
+        }
+        .snake { 
+            background-color: #228B22; 
+        }
+        .food { 
+            background-color: red; 
+        }
+        button { 
+            margin: 10px; 
+            padding: 10px; 
+        }
+        #gameOver { 
+            display: none; 
+            color: red; f
+            ont-size: 24px; 
+        }
+        #score { 
+            font-size: 24px; }
         .back-button {
             position: absolute;
             top: 20px;
             left: 20px;
             padding: 10px 20px;
-            background-color: #ff5722;
+            background-color: rgb(163, 4, 255);
             color: white;
             border: none;
             border-radius: 5px;

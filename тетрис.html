@@ -12,7 +12,8 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: rgb(27, 21, 21);
+            background-image: url('https://st5.depositphotos.com/49638596/66811/i/450/depositphotos_668115218-stock-photo-highly-detailed-clean-background-horizontal.jpg');
+            background-size:cover;
             color: white;
         }
         canvas {
@@ -27,7 +28,7 @@
             top: 20px;
             left: 20px;
             padding: 10px 20px;
-            background-color: #ff5722;
+            background-color: rgb(163, 4, 255);
             color: white;
             border: none;
             border-radius: 5px;
@@ -125,7 +126,7 @@
                 if (collision()) {
                     currentPiece.y -= 1;
                     merge();
-                    score += checkLines(); // Увеличиваем очки
+                    score += checkLines(); 
                     newPiece();
                     if (collision()) {
                         endGame();
@@ -166,7 +167,7 @@
                     linesCleared++;
                 }
             }
-            return linesCleared * 100; // За каждые 100 очков за линию
+            return linesCleared * 100; 
         }
 
         function newPiece() {
